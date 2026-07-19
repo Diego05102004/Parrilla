@@ -24,7 +24,7 @@
         <!-- Lienzo que se convierte en imagen descargable -->
         <main id="poster" class="poster">
             <div class="poster__header">
-                <img class="poster__logo" src="https://thundernet.com.ve/wp-content/uploads/2025/08/logotipotvgo.webp" alt="Thundernet TV GO">
+                <img class="poster__logo" src="img.php?u=<?= rawurlencode('https://thundernet.com.ve/wp-content/uploads/2025/08/logotipotvgo.webp') ?>" alt="Thundernet TV GO">
                 <div class="poster__heading">
                     <h2>Grilla de Canales</h2>
                     <p id="poster-subtitle">Más de 190 canales full HD</p>
