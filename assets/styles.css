@@ -234,6 +234,31 @@ body {
 
 .channel--hidden { display: none; }
 
+/* Modo exportación: logos y nombres más grandes para que la imagen
+   descargada (JPG) se lea bien al enviarla por WhatsApp. Solo aplica
+   mientras se genera la imagen; la navegación en pantalla queda compacta. */
+.poster--export .grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 18px;
+}
+
+.poster--export .channel {
+    min-height: 218px;
+    padding: 18px 12px;
+    gap: 12px;
+}
+
+.poster--export .channel__logo {
+    width: 132px;
+    height: 132px;
+    padding: 6px;
+}
+
+.poster--export .channel__name {
+    font-size: 21px;
+    line-height: 1.2;
+}
+
 .poster__footer {
     display: flex;
     justify-content: space-between;

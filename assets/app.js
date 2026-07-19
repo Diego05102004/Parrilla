@@ -205,6 +205,10 @@
         setStatus("Generando imagen…");
         els.download.disabled = true;
 
+        // Modo exportación: agranda logos y nombres para que se lean bien
+        // cuando la imagen se comparte (p. ej. por WhatsApp).
+        els.poster.classList.add("poster--export");
+
         // Oculta los demás planes cuando se exporta uno solo.
         var hidden = [];
         if (onlySection) {
@@ -236,8 +240,10 @@
                 var link = document.createElement("a");
                 var stamp = new Date().toISOString().slice(0, 10);
                 var mid = onlySection ? slugify(planName) + "-" : "";
-                link.download = "parrilla-thundernet-" + mid + stamp + ".png";
-                link.href = canvas.toDataURL("image/png");
+                // JPG de alta calidad: mucho más liviano que PNG y apto para
+                // enviar por WhatsApp sin perder legibilidad.
+                link.download = "parrilla-thundernet-" + mid + stamp + ".jpg";
+                link.href = canvas.toDataURL("image/jpeg", 0.92);
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
@@ -250,6 +256,7 @@
             })
             .finally(function () {
                 restore();
+                els.poster.classList.remove("poster--export");
                 els.download.disabled = false;
             });
     }
