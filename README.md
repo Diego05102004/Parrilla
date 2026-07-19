@@ -29,8 +29,10 @@ Página fuente:
    livianas que PNG y aptas para enviar por WhatsApp) con
    [html2canvas](https://html2canvas.hertzen.com/):
    - **Descargar imagen**: la grilla completa con todos los planes.
-   - **Descargar este plan** (en cada encabezado): solo ese plan. Genera una
-     imagen corta, ideal para enviar por WhatsApp.
+   - **Descargar este plan** (en cada encabezado de plan): solo ese plan.
+   - **Descargar** (en cada encabezado de categoría): solo esa categoría
+     (p. ej. Deportes, Internacionales). Genera una imagen corta, ideal para
+     enviar por WhatsApp.
    - Al exportar, la grilla entra en "modo exportación" (clase
      `poster--export`) que **agranda los logos y los nombres** para que los
      canales se vean claros en la imagen, sin afectar la vista compacta en

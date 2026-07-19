@@ -183,6 +183,24 @@ body {
     padding-bottom: 2px;
 }
 
+.cat__dl {
+    cursor: pointer;
+    border: 0;
+    border-radius: 8px;
+    background: #0d1430;
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 12px;
+    padding: 5px 11px;
+    white-space: nowrap;
+    flex: 0 0 auto;
+    margin-left: auto;
+    transition: background .2s ease, transform .05s ease;
+}
+
+.cat__dl:hover { background: #16204a; }
+.cat__dl:active { transform: translateY(1px); }
+
 .cat__name {
     font-size: 19px;
     font-weight: 700;
