@@ -25,11 +25,18 @@ Página fuente:
    (6 h por defecto) para no golpear la web en cada visita.
 3. `index.php` + `assets/app.js` renderizan la grilla en el navegador, permiten
    **buscar** un canal y **actualizar** los datos bajo demanda.
-4. `assets/app.js` genera **imágenes PNG descargables** con
+4. `assets/app.js` genera **imágenes JPG descargables** (alta calidad, más
+   livianas que PNG y aptas para enviar por WhatsApp) con
    [html2canvas](https://html2canvas.hertzen.com/):
    - **Descargar imagen**: la grilla completa con todos los planes.
-   - **Descargar este plan** (en cada encabezado): solo ese plan. Genera una
-     imagen corta y con logos/texto grandes, ideal para enviar por WhatsApp.
+   - **Descargar este plan** (en cada encabezado de plan): solo ese plan.
+   - **Descargar** (en cada encabezado de categoría): solo esa categoría
+     (p. ej. Deportes, Internacionales). Genera una imagen corta, ideal para
+     enviar por WhatsApp.
+   - Al exportar, la grilla entra en "modo exportación" (clase
+     `poster--export`) que **agranda los logos y los nombres** para que los
+     canales se vean claros en la imagen, sin afectar la vista compacta en
+     pantalla.
 
    Los logos se sirven a través del proxy `img.php` (mismo origen) para que la
    exportación a imagen no falle por CORS.

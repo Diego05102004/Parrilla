@@ -183,6 +183,24 @@ body {
     padding-bottom: 2px;
 }
 
+.cat__dl {
+    cursor: pointer;
+    border: 0;
+    border-radius: 8px;
+    background: #0d1430;
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 12px;
+    padding: 5px 11px;
+    white-space: nowrap;
+    flex: 0 0 auto;
+    margin-left: auto;
+    transition: background .2s ease, transform .05s ease;
+}
+
+.cat__dl:hover { background: #16204a; }
+.cat__dl:active { transform: translateY(1px); }
+
 .cat__name {
     font-size: 19px;
     font-weight: 700;
@@ -233,6 +251,31 @@ body {
 }
 
 .channel--hidden { display: none; }
+
+/* Modo exportación: logos y nombres más grandes para que la imagen
+   descargada (JPG) se lea bien al enviarla por WhatsApp. Solo aplica
+   mientras se genera la imagen; la navegación en pantalla queda compacta. */
+.poster--export .grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 18px;
+}
+
+.poster--export .channel {
+    min-height: 218px;
+    padding: 18px 12px;
+    gap: 12px;
+}
+
+.poster--export .channel__logo {
+    width: 132px;
+    height: 132px;
+    padding: 6px;
+}
+
+.poster--export .channel__name {
+    font-size: 21px;
+    line-height: 1.2;
+}
 
 .poster__footer {
     display: flex;

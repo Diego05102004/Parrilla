@@ -106,13 +106,18 @@
             dl.className = "plan__dl no-capture";
             dl.textContent = "Descargar este plan";
             dl.title = "Descargar solo la imagen de " + plan.name;
-            dl.addEventListener("click", function () { download(section, plan.name); });
+            dl.addEventListener("click", function () {
+                download({ plan: section, name: plan.name });
+            });
             head.appendChild(dl);
 
             section.appendChild(head);
 
             if (plan.categories && plan.categories.length) {
                 plan.categories.forEach(function (cat) {
+                    var catBlock = document.createElement("div");
+                    catBlock.className = "cat";
+
                     var catHead = document.createElement("div");
                     catHead.className = "cat__head";
                     catHead.innerHTML = '<span class="cat__name"></span>' +
@@ -120,8 +125,24 @@
                     catHead.querySelector(".cat__name").textContent = cat.name;
                     catHead.querySelector(".cat__count").textContent =
                         cat.channels.length + " canales";
-                    section.appendChild(catHead);
-                    section.appendChild(gridOf(cat.channels));
+
+                    var cdl = document.createElement("button");
+                    cdl.type = "button";
+                    cdl.className = "cat__dl no-capture";
+                    cdl.textContent = "Descargar";
+                    cdl.title = "Descargar solo la imagen de " + cat.name;
+                    cdl.addEventListener("click", function () {
+                        download({
+                            plan: section,
+                            cat: catBlock,
+                            name: plan.name + " · " + cat.name,
+                        });
+                    });
+                    catHead.appendChild(cdl);
+
+                    catBlock.appendChild(catHead);
+                    catBlock.appendChild(gridOf(cat.channels));
+                    section.appendChild(catBlock);
                 });
             } else {
                 section.appendChild(gridOf(plan.channels));
@@ -193,9 +214,17 @@
             .replace(/^-+|-+$/g, "") || "plan";
     }
 
-    // Si se pasa una sección de plan, exporta solo ese plan (imagen corta,
-    // ideal para WhatsApp). Sin argumentos, exporta la grilla completa.
-    function download(onlySection, planName) {
+    // Opciones:
+    //   - sin argumentos: exporta la grilla completa.
+    //   - { plan, name }: exporta solo ese plan.
+    //   - { plan, cat, name }: exporta solo esa categoría del plan.
+    // Las imágenes por plan/categoría son cortas, ideales para WhatsApp.
+    function download(opts) {
+        opts = opts || {};
+        var planSection = opts.plan || null;
+        var catBlock = opts.cat || null;
+        var label = opts.name || null;
+
         if (els.search.value.trim()) {
             // Para la imagen exportamos siempre sin filtro de búsqueda.
             els.search.value = "";
@@ -205,15 +234,27 @@
         setStatus("Generando imagen…");
         els.download.disabled = true;
 
-        // Oculta los demás planes cuando se exporta uno solo.
+        // Modo exportación: agranda logos y nombres para que se lean bien
+        // cuando la imagen se comparte (p. ej. por WhatsApp).
+        els.poster.classList.add("poster--export");
+
         var hidden = [];
-        if (onlySection) {
+        function hide(el) {
+            hidden.push([el, el.style.display]);
+            el.style.display = "none";
+        }
+
+        // Oculta los demás planes; y si se pide una categoría, oculta también
+        // las demás categorías dentro del plan.
+        if (planSection) {
             els.content.querySelectorAll(".plan").forEach(function (sec) {
-                if (sec !== onlySection) {
-                    hidden.push([sec, sec.style.display]);
-                    sec.style.display = "none";
-                }
+                if (sec !== planSection) hide(sec);
             });
+            if (catBlock) {
+                planSection.querySelectorAll(".cat").forEach(function (c) {
+                    if (c !== catBlock) hide(c);
+                });
+            }
         }
 
         function restore() {
@@ -222,9 +263,18 @@
 
         waitForImages()
             .then(function () {
+                // Escala adaptativa: usa 2x para máxima nitidez, pero la baja si
+                // el póster es muy alto (planes con muchos canales) para no
+                // superar el límite de tamaño de <canvas> del navegador
+                // (~16384 px), que dejaría la imagen en blanco o colgada.
+                var MAX_PX = 15000;
+                var height = els.poster.scrollHeight || els.poster.offsetHeight || 0;
+                var scale = height > 0 ? Math.min(2, MAX_PX / height) : 2;
+                if (!isFinite(scale) || scale < 1) scale = height > 0 ? MAX_PX / height : 1;
+
                 return html2canvas(els.poster, {
                     backgroundColor: "#0d1430",
-                    scale: 2,
+                    scale: scale,
                     useCORS: true,
                     logging: false,
                     ignoreElements: function (el) {
@@ -235,21 +285,24 @@
             .then(function (canvas) {
                 var link = document.createElement("a");
                 var stamp = new Date().toISOString().slice(0, 10);
-                var mid = onlySection ? slugify(planName) + "-" : "";
-                link.download = "parrilla-thundernet-" + mid + stamp + ".png";
-                link.href = canvas.toDataURL("image/png");
+                var mid = label ? slugify(label) + "-" : "";
+                // JPG de alta calidad: mucho más liviano que PNG y apto para
+                // enviar por WhatsApp sin perder legibilidad.
+                link.download = "parrilla-thundernet-" + mid + stamp + ".jpg";
+                link.href = canvas.toDataURL("image/jpeg", 0.92);
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
                 setStatus(resumen() +
-                    (onlySection ? " · imagen de " + planName + " descargada"
-                                 : " · imagen descargada"));
+                    (label ? " · imagen de " + label + " descargada"
+                           : " · imagen descargada"));
             })
             .catch(function (err) {
                 setStatus("No se pudo generar la imagen: " + err.message);
             })
             .finally(function () {
                 restore();
+                els.poster.classList.remove("poster--export");
                 els.download.disabled = false;
             });
     }
