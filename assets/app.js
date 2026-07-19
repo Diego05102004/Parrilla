@@ -226,9 +226,18 @@
 
         waitForImages()
             .then(function () {
+                // Escala adaptativa: usa 2x para máxima nitidez, pero la baja si
+                // el póster es muy alto (planes con muchos canales) para no
+                // superar el límite de tamaño de <canvas> del navegador
+                // (~16384 px), que dejaría la imagen en blanco o colgada.
+                var MAX_PX = 15000;
+                var height = els.poster.scrollHeight || els.poster.offsetHeight || 0;
+                var scale = height > 0 ? Math.min(2, MAX_PX / height) : 2;
+                if (!isFinite(scale) || scale < 1) scale = height > 0 ? MAX_PX / height : 1;
+
                 return html2canvas(els.poster, {
                     backgroundColor: "#0d1430",
-                    scale: 2,
+                    scale: scale,
                     useCORS: true,
                     logging: false,
                     ignoreElements: function (el) {
